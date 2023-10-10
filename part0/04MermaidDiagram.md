@@ -26,14 +26,17 @@ sequenceDiagram
 
     Note right of browser: The browser executes the callback function that renders the notes
 
-    broser-->server: POST new note to https://studies.cs.helsinki.fi/exampleapp/data.json
+    browser->>server: PUT https://studies.cs.helsinki.fi/exampleapp/data.json
     activate server
     Note left of server: Writing a new note to database
+    Note left of server: [{ "content": "annnnnnn", "date": "2023-10-05" }, ... ]
     deactivate server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
     activate server
-    server-->>browser: [{ "content": "HTML is easy", "date": "2023-1-1" }, ... ]
+    server-->>browser: [{ "content": "annnnnnn", "date": "2023-10-05" }, ... ]
     deactivate server
 
     Note right of browser: The browser executes the callback function that renders the notes
+
+    # a online service "Mermaid Live Editor" is using to render the Mermaid diagram

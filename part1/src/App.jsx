@@ -1,7 +1,7 @@
-const Header = () => {
+const Header = (props) => {
   return (
     <h2>
-      <p>Half Stack application development</p>
+      <p>{props.course}</p>
     </h2>
   )
 }
@@ -48,7 +48,6 @@ const App = () => {
       <Content name={part2.name} exercises={part2.exercises} />
       <Content name={part3.name} exercises={part3.exercises} />
       <Total exercises={part1.exercises + part2.exercises + part3.exercises} />
-
     </div>
   )
 }

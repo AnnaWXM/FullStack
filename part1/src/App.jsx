@@ -6,6 +6,16 @@ const Button = (props) => (
   </button>
 )
 
+function findIndexOfMaxValue(arr) {
+  let maxIndex = 0; // Initialize maxIndex with 0 as the default
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] > arr[maxIndex]) {
+      maxIndex = i; // Update maxIndex if a larger value is found
+    }
+  }
+  return maxIndex;
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -19,13 +29,33 @@ const App = () => {
   ]
 
   const [selected, setSelected] = useState(0)
+  const [points, setPoints] = useState(Array(anecdotes.length).fill(0));
+
   console.log(selected)
+
+  const handleVoteClick = () => {
+    const newPoints = [...points]; // Create a copy of the points array
+    newPoints[selected] += 1;
+    setPoints(newPoints); // Update the state to trigger a re-render
+  };
+
+
+  console.log(points)
+  let maxPoints = findIndexOfMaxValue(points);
 
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
 
-      <Button handleClick={() => setSelected(Math.floor(Math.random() * 8))} text='change anecdotes' />
+      <h1>Anecdotes of the day</h1>
+      <p>{anecdotes[selected]}</p>
+      <p> Has {points[selected]} votes.</p>
+      <Button handleClick={() => handleVoteClick()} text='VOTE' />
+      <Button handleClick={() => setSelected(Math.floor(Math.random() * 8))} text='next anecdotes' />
+
+      <h1>Anecdotes with most votes</h1>
+      <p>{anecdotes[maxPoints]}</p>
+      <p> Has {points[maxPoints]} votes.</p>
+
     </div>
   )
 }

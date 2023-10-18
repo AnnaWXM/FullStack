@@ -19,13 +19,23 @@ const App = () => {
   ]
 
   const [selected, setSelected] = useState(0)
+  const [points, setPoints] = useState(Array(anecdotes.length).fill(0));
   console.log(selected)
+
+  const handleVoteClick = () => {
+    const newPoints = [...points]; // Create a copy of the points array
+    newPoints[selected] += 1;
+    setPoints(newPoints); // Update the state to trigger a re-render
+  };
+
+  console.log(points)
 
   return (
     <div>
       <p>{anecdotes[selected]}</p>
-
-      <Button handleClick={() => setSelected(Math.floor(Math.random() * 8))} text='change anecdotes' />
+      <p> Has {points[selected]} votes.</p>
+      <Button handleClick={() => handleVoteClick()} text='VOTE' />
+      <Button handleClick={() => setSelected(Math.floor(Math.random() * 8))} text='next anecdotes' />
     </div>
   )
 }

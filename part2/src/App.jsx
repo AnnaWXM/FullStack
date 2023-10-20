@@ -12,6 +12,7 @@ const Content = ({ parts }) =>
     <Part key={part.id} part={part} />
   ));
 
+
 const Course = ({ course }) =>
   <>
     <Header course={course} />

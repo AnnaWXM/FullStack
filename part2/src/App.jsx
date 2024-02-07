@@ -1,77 +1,97 @@
-const Header = ({ course }) => <h2>{course.name}</h2>
+import { useState } from 'react';
 
-const Total = ({ parts }) => <b>Number of exercises {parts.reduce((sum, p) => sum + p.exercises, 0)}</b>
+const Filter = ({ filter, handleFilter }) => {
+  return (
+    <form>
+      <div>filter shown with: <input value={filter} onChange={handleFilter} /></div>
+    </form>
+  );
+};
 
-const Part = ({ part }) =>
-  <p>
-    {part.name} {part.exercises}
-  </p>
+const PersonForm = ({ addPerson, newName, newNumber, handleNameChange, handleNumberChange }) => {
+  return (
+    <form onSubmit={addPerson}>
+      <div>name: <input value={newName} onChange={handleNameChange} /></div>
+      <div>number: <input value={newNumber} onChange={handleNumberChange} /></div>
+      <div><button type="submit">add</button></div>
+    </form>
+  );
+};
 
-const Content = ({ parts }) =>
-  parts.map(part => (
-    <Part key={part.id} part={part} />
-  ));
+const Name = ({ name, number }) => {
+  return (
+    <li>{name} {number}</li>
+  );
+};
 
-const Course = ({ course }) =>
-  <>
-    <Header course={course} />
-    <Content parts={course.parts} />
-    <Total parts={course.parts} />
-  </>
+const Persons = ({ persons }) => {
+  return (
+    <ul>
+      {persons.map((person) => (
+        <Name key={person.id} name={person.name} number={person.number} />
+      ))}
+    </ul>
+  );
+};
 
 const App = () => {
-  const courses = [
-    {
-      name: 'Half Stack application development',
-      id: 1,
-      parts: [
-        {
-          name: 'Fundamentals of React',
-          exercises: 10,
-          id: 1
-        },
-        {
-          name: 'Using props to pass data',
-          exercises: 7,
-          id: 2
-        },
-        {
-          name: 'State of a component',
-          exercises: 14,
-          id: 3
-        },
-        {
-          name: 'Redux',
-          exercises: 11,
-          id: 4
-        }
-      ]
-    },
-    {
-      name: 'Node.js',
-      id: 2,
-      parts: [
-        {
-          name: 'Routing',
-          exercises: 3,
-          id: 1
-        },
-        {
-          name: 'Middlewares',
-          exercises: 7,
-          id: 2
-        }
-      ]
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
+  ]);
+
+  const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
+  const [filter, setFilter] = useState('');
+  const [showAll, setShowAll] = useState(true)
+
+  const addPerson = (event) => {
+    event.preventDefault();
+    if (persons.some((person) => person.name === newName)) {
+      alert('This name already exists in the phonebook!');
+      return;
     }
-  ]
+    const newPerson = { name: newName, number: newNumber, id: persons.length + 1 };
+    setPersons([...persons, newPerson]);
+    setNewName('');
+    setNewNumber('');
+  };
+
+  const handleNameChange = (event) => {
+    setNewName(event.target.value);
+  };
+
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value);
+  };
+
+  const handleFilter = (event) => {
+    setFilter(event.target.value);
+    setShowAll(false); // Set to false whenever the filter changes
+  };
+
+  const personsToShow = showAll
+    ? persons
+    : persons.filter(persons => persons.name.toLowerCase().includes(filter.toLowerCase()))
 
   return (
     <div>
-      <h1>Web development curriculum</h1>
-      <Course course={courses[0]} />
-      <Course course={courses[1]} />
+      <h2>Phonebook</h2>
+      <Filter filter={filter} handleFilter={handleFilter} />
+      <h3>Add a new</h3>
+      <PersonForm
+        addPerson={addPerson}
+        newName={newName}
+        newNumber={newNumber}
+        handleNameChange={handleNameChange}
+        handleNumberChange={handleNumberChange}
+      />
+      <h3>Numbers</h3>
+      <Persons persons={personsToShow} />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;

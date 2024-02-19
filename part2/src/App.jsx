@@ -24,7 +24,7 @@ const Persons = ({ persons, deletePerson }) => {
   return (
     <ul>
       {persons.map(person => (
-        <li key={person.id}>
+        <li className='note' key={person.id}>
           {person.name} {person.number}
           <button onClick={() => deletePerson(person.id)}>Delete</button>
         </li>
@@ -33,13 +33,24 @@ const Persons = ({ persons, deletePerson }) => {
   );
 };
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+  return (
+    <div className='error'>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]);
-
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
   const [showAll, setShowAll] = useState(true)
+  const [message, setMessage] = useState('message recevied.')
 
   useEffect(() => {
     personService
@@ -63,20 +74,23 @@ const App = () => {
             setPersons(updatePersons)
             setNewNumber('')
           })
-      }
-      else {
-        const idint = persons.length + 1
-        const newPerson = { name: newName, number: newNumber, id: idint.toString() };
-        personService
-          .create(newPerson)
-          .then(returnedPerson => {
-            setPersons(persons.concat(returnedPerson))
-            setNewName('')
-            setNewNumber('')
-          })
+        setMessage(`${existPerson.name} number changed`)
       }
     }
+    else {
+      const idint = persons.length + 1
+      const newPerson = { name: newName, number: newNumber, id: idint.toString() };
+      personService
+        .create(newPerson)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
+      setMessage(`${newName} person added`)
+    }
   }
+
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -99,6 +113,7 @@ const App = () => {
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
         })
+      setMessage(`the person information deleted`)
     }
   }
 
@@ -109,6 +124,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter filter={filter} handleFilter={handleFilter} />
       <h3>Add a new</h3>
       <PersonForm

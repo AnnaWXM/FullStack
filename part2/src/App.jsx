@@ -24,7 +24,7 @@ const Persons = ({ persons, deletePerson }) => {
   return (
     <ul>
       {persons.map(person => (
-        <li className='note' key={person.id}>
+        <li className='person' key={person.id}>
           {person.name} {person.number}
           <button onClick={() => deletePerson(person.id)}>Delete</button>
         </li>
@@ -33,15 +33,33 @@ const Persons = ({ persons, deletePerson }) => {
   );
 };
 
-const Notification = ({ message }) => {
-  if (message === null) {
-    return null
+const Notification = ({ message, type }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (message) {
+      setIsVisible(true);
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
+  if (!isVisible) {
+    return null;
   }
+
+  let className = 'notification'
+  if (type === 'error') {
+    className = 'error'
+  }
+
   return (
-    <div className='error'>
+    <div className={className}>
       {message}
     </div>
-  )
+  );
 }
 
 const App = () => {
@@ -51,6 +69,7 @@ const App = () => {
   const [filter, setFilter] = useState('');
   const [showAll, setShowAll] = useState(true)
   const [message, setMessage] = useState('message recevied.')
+  const [isError, setIsError] = useState(false)
 
   useEffect(() => {
     personService
@@ -74,6 +93,10 @@ const App = () => {
             setPersons(updatePersons)
             setNewNumber('')
           })
+          .catch(error => {
+            setMessage(`Information of ${newName} has been removed from server`)
+            setIsError(true)
+          })
         setMessage(`${existPerson.name} number changed`)
       }
     }
@@ -90,7 +113,6 @@ const App = () => {
       setMessage(`${newName} person added`)
     }
   }
-
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -121,10 +143,16 @@ const App = () => {
     ? persons
     : persons.filter(persons => persons.name.toLowerCase().includes(filter.toLowerCase()))
 
+
+  const [className, setClassName] = useState('notification')
+  if (isError) {
+    setClassName('error')
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message} />
+      <Notification message={message} type={className} />
       <Filter filter={filter} handleFilter={handleFilter} />
       <h3>Add a new</h3>
       <PersonForm

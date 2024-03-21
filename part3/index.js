@@ -32,6 +32,16 @@ app.get('/api/persons', (request, response) => {
     response.json(persons)
 })
 
+app.get('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    const person = persons.find(person => person.id === id)
+    if (!person) {
+        response.status(404).json({ Error: 'Not Found' })
+    } else {
+        response.json(person)
+    }
+})
+
 app.get('/info', (request, response) => {
     let len = persons.length
     let currentTime = new Date();

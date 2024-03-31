@@ -21,12 +21,13 @@ const PersonForm = ({ addPerson, newName, newNumber, handleNameChange, handleNum
 };
 
 const Persons = ({ persons, deletePerson }) => {
+
   return (
     <ul>
       {persons.map(person => (
-        <li className='person' key={person.id}>
+        <li className='person' key={person._id}>
           {person.name} {person.number}
-          <button onClick={() => deletePerson(person.id)}>Delete</button>
+          <button onClick={() => deletePerson(person._id)}>Delete</button>
         </li>
       ))}
     </ul>
@@ -101,8 +102,19 @@ const App = () => {
       }
     }
     else {
-      const idint = persons.length + 1
-      const newPerson = { name: newName, number: newNumber, id: idint.toString() };
+      let idint;
+      if (persons.length == 0) {
+        idint = 1
+      }
+      else {
+        idint = persons.length + 1
+      }
+      let existId = persons.find((person) => person._id == idint)
+      while (existId) {
+        idint = idint + 1
+        existId = persons.find((person) => person._id == idint)
+      }
+      const newPerson = { name: newName, number: newNumber, _id: idint.toString() };
       personService
         .create(newPerson)
         .then(returnedPerson => {

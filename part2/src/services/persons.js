@@ -1,4 +1,5 @@
 import axios from 'axios'
+//before dist build remove localhost
 const baseUrl = '/api/persons'
 
 const getAll = () => {
@@ -17,6 +18,7 @@ const update = (id, newObject) => {
 }
 
 const remove = id => {
+    console.log(id)
     const request = axios.delete(`${baseUrl}/${id}`)
     return request.then(response => response.data)
 }
